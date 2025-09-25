@@ -41,7 +41,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4); // Для тз норма и 4 это возможный минимум,
-        // для продакшена рекомендуется использовать хотя бы 10-12
+        return new BCryptPasswordEncoder(4); 
     }
 }
