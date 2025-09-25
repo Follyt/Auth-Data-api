@@ -32,7 +32,6 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public String login(@RequestBody @Valid LoginRequest request) {
-        // вернём сырой JWT токен для проверки генерации
         return authService.login(request.email(), request.password_hash());
     }
 
