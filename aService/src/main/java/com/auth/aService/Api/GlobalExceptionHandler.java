@@ -39,7 +39,6 @@ public class GlobalExceptionHandler {
     }
 
     private String messageOf(FieldError fe) {
-        // если есть кастомное message — возьми его, иначе дефолт
         return fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "validation failed";
     }
 
@@ -57,7 +56,7 @@ public class GlobalExceptionHandler {
                 .body(body(HttpStatus.UNAUTHORIZED, "Invalid email or password", req));
     }
 
-    // 409 — конфликт уникальности (например, email уникальный)
+    // 409 — конфликт уникальности
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleConflict(DataIntegrityViolationException ex, ServletWebRequest req) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -69,7 +68,7 @@ public class GlobalExceptionHandler {
         return msg != null ? msg : "data integrity violation";
     }
 
-    // 400 — любые твои «не прошла бизнес-валидация»
+    // 400 — не прошла бизнес-валидация
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArg(IllegalArgumentException ex, ServletWebRequest req) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
