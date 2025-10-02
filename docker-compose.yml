@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  data-api:
+    build: ./bService
+    container_name: data-api
+    environment:
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+    ports:
+      - "8081:8081"
+
+  auth-api:
+    build: ./aService
+    container_name: auth-api
+    environment:
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appdb
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppass
+      SERVICEB_URL: http://data-api:8081/api/transform
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - data-api
+
+volumes:
+  pgdata:
